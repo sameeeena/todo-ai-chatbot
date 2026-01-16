@@ -8,12 +8,11 @@ export const auth = betterAuth({
     }),
     emailAndPassword: {
         enabled: true,
+        autoSignIn: true, 
+        requireEmailVerification: false,
     },
     session: {
-        cookieCache: {
-            enabled: true,
-            strategy: "jwt",
-        },
+        expiresIn: 7 * 24 * 60 * 60, // 7 days
     },
     plugins: [
         jwt({

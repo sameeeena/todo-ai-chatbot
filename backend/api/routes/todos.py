@@ -3,13 +3,13 @@ from sqlmodel import Session, select
 from typing import List, Optional
 from backend.core.database import get_session
 from backend.core.security import get_current_user
-from backend.models.todo import Todo
+from backend.models.todo import Todo, TodoCreate, TodoUpdate
 
 router = APIRouter()
 
 @router.post("/", response_model=Todo)
 def create_todo(
-    todo: Todo,
+    todo_create: TodoCreate,
     session: Session = Depends(get_session),
     current_user_id: str = Depends(get_current_user)
 ):
@@ -17,7 +17,7 @@ def create_todo(
     Create a new todo.
     User ID is automatically assigned from the token.
     """
-    todo.user_id = current_user_id
+    todo = Todo.model_validate(todo_create, update={"user_id": current_user_id})
     session.add(todo)
     session.commit()
     session.refresh(todo)
@@ -55,7 +55,7 @@ def read_todo(
 @router.patch("/{todo_id}", response_model=Todo)
 def update_todo(
     todo_id: int,
-    todo_update: Todo,
+    todo_update: TodoUpdate,
     session: Session = Depends(get_session),
     current_user_id: str = Depends(get_current_user)
 ):
@@ -68,10 +68,7 @@ def update_todo(
         raise HTTPException(status_code=404, detail="Todo not found")
     
     todo_data = todo_update.model_dump(exclude_unset=True)
-    # Prevent user_id from being updated via API
-    if "user_id" in todo_data:
-        del todo_data["user_id"]
-
+    
     for key, value in todo_data.items():
         setattr(db_todo, key, value)
     

@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Set the root directory to resolve workspace warnings about multiple lockfiles
+  turbopack: {
+    root: process.cwd(), // Use absolute path to resolve workspace warnings
+  },
 };
 
 export default nextConfig;

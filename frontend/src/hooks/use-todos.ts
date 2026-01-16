@@ -16,14 +16,14 @@ export function useTodos() {
   const { data: todos = [], isLoading, error } = useQuery<Todo[]>({
     queryKey: ["todos"],
     queryFn: async () => {
-      const response = await api.get("/todos");
+      const response = await api.get("/todos/");
       return response.data;
     },
   });
 
   const createTodo = useMutation({
     mutationFn: async (newTodo: { title: string, description?: string }) => {
-      const response = await api.post("/todos", newTodo);
+      const response = await api.post("/todos/", newTodo);
       return response.data;
     },
     onSuccess: () => {
@@ -33,7 +33,7 @@ export function useTodos() {
 
   const toggleTodo = useMutation({
     mutationFn: async ({ id, completed }: { id: number; completed: boolean }) => {
-      const response = await api.put(`/todos/${id}`, { completed });
+      const response = await api.patch(`/todos/${id}`, { completed });
       return response.data;
     },
     onSuccess: () => {
@@ -51,6 +51,16 @@ export function useTodos() {
     },
   });
 
+  const updateTodo = useMutation({
+    mutationFn: async ({ id, title, description }: { id: number; title?: string; description?: string }) => {
+      const response = await api.patch(`/todos/${id}`, { title, description });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
   return {
     todos,
     isLoading,
@@ -58,5 +68,6 @@ export function useTodos() {
     createTodo,
     toggleTodo,
     deleteTodo,
+    updateTodo,
   };
 }
