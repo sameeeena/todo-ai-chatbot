@@ -66,9 +66,14 @@ api.interceptors.response.use(
     // Return successful responses as-is
     return response;
   },
-  async (error: AxiosError) => {
-    // Add error logging
-    console.error(`API Error: ${error.message} for ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
+    async (error: AxiosError) => {
+      // Add error logging
+      if (error.response) {
+        console.error(`API Error: ${error.message} (${error.response.status}) for ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
+        console.error("Response Data:", JSON.stringify(error.response.data, null, 2));
+      } else {
+        console.error(`API Error: ${error.message} for ${error.config?.method?.toUpperCase()} ${error.config?.url}`);
+      }
 
     const { response } = error;
 

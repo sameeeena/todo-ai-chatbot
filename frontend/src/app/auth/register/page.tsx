@@ -37,14 +37,18 @@ export default function RegisterPage() {
       });
 
       if ('error' in result && result.error) {
-        setError('An error occurred during registration');
+        console.error("Registration error:", result.error);
+        const errorMessage = typeof result.error === 'string' 
+          ? result.error 
+          : result.error?.message || 'An error occurred during registration';
+        setError(errorMessage);
       } else {
         router.push("/dashboard");
         router.refresh();
       }
     } catch (err) {
-      setError("An error occurred during registration");
-      console.error(err);
+      console.error("Registration exception:", err);
+      setError(err instanceof Error ? err.message : "An error occurred during registration");
     } finally {
       setIsLoading(false);
     }

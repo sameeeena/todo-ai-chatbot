@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Define public routes that don't require authentication
-const publicRoutes = ["/", "/landing", "/auth/login", "/auth/register"];
+const publicRoutes = ["/", "/landing", "/auth/login", "/auth/register", "/login", "/register"];
 
 // Define protected routes that require authentication (including nested routes)
 const protectedRoutes = ["/dashboard/**"]; // Using /** to match all nested routes

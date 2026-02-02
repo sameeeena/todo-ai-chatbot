@@ -27,6 +27,6 @@ pool.connect()
             });
     })
     .catch(err => {
-        console.error('❌ Connection failed:', err.message);
+        console.error('❌ Connection failed:', err);
         process.exit(1);
     });

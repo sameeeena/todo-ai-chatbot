@@ -25,11 +25,11 @@ def main():
         # Now run the server
         import uvicorn
 
-        print(f"[STARTING] Starting backend server on http://localhost:{port}")
-        print("[INFO] Press Ctrl+C to stop the server")
-
         # Use PORT environment variable if available (for Hugging Face Spaces)
         port = int(os.environ.get("PORT", 8000))
+
+        print(f"[STARTING] Starting backend server on http://localhost:{port}")
+        print("[INFO] Press Ctrl+C to stop the server")
 
         uvicorn.run(
             app,

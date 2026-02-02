@@ -6,11 +6,15 @@ import QueryProvider from "@/components/providers/query-provider";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
+  preload: false,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -18,15 +22,18 @@ export const metadata: Metadata = {
   description: "A full-stack Todo application built with Next.js and FastAPI",
 };
 
+// Font optimization: The Geist fonts are configured with display: 'swap'
+// to prevent invisible text while fonts load, which should eliminate preload warnings
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-100 text-slate-900`}
+        className={`antialiased bg-slate-100 text-slate-900`}
       >
         <QueryProvider>
           {children}

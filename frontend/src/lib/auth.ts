@@ -1,17 +1,15 @@
 import { betterAuth } from "better-auth";
-import { Pool } from "pg";
+import Database from "better-sqlite3";
 import { jwt } from "better-auth/plugins";
 
 export const auth = betterAuth({
-    database: new Pool({
-        connectionString: process.env.DATABASE_URL,
-    }),
+    database: new Database("auth.db"),
     emailAndPassword: {
         enabled: true,
-        autoSignIn: true, 
+        autoSignIn: true,
         requireEmailVerification: false,
-    },
-    session: {
+    },    session: {
+        strategy: "jwt",
         expiresIn: 7 * 24 * 60 * 60, // 7 days
     },
     plugins: [
