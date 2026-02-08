@@ -8,3 +8,5 @@ alembic
 pytest
 httpx
 PyJWT
+cryptography
+google-generativeai

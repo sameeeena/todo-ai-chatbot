@@ -1,22 +1,36 @@
 import os
 import sys
+import logging
 from pathlib import Path
 
-# Add the parent directory to the path so we can import the backend modules properly
-parent_dir = Path(__file__).resolve().parent
-sys.path.insert(0, str(parent_dir))
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-from main import app
+logger.info("Starting application...")
 
-# This serves as the entry point for Hugging Face Spaces
-# Hugging Face Spaces will run this application with Uvicorn
+# Add current directory to path
+current_dir = Path(__file__).resolve().parent
+sys.path.insert(0, str(current_dir))
+
+try:
+    from main import app
+    logger.info("Successfully imported FastAPI 'app' from main.py")
+except ImportError as e:
+    logger.error(f"Failed to import 'app' from main.py: {e}")
+    logger.info(f"Current directory contents: {os.listdir(current_dir)}")
+    sys.exit(1)
 
 if __name__ == "__main__":
     import uvicorn
-    # Run the FastAPI app on the port specified by Hugging Face
+    port = int(os.environ.get("PORT", 7860))
+    logger.info(f"Running Uvicorn on port {port}")
+    
+    # Run uvicorn
     uvicorn.run(
-        app,
+        "main:app",
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 7860)),  # Hugging Face uses PORT environment variable
-        reload=False
+        port=port,
+        reload=False,
+        log_level="info"
     )

@@ -3,34 +3,26 @@ from typing import Generator
 import os
 from dotenv import load_dotenv
 
-# Try to load from project root or backend directory
-load_dotenv() # Default check in CWD
-load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")) # Check in backend/
+# Load .env
+load_dotenv()
 
 # Get DB URL from env
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Ensure URL is set
 if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is not set")
+    # Fallback to local sqlite for safety, but HuggingFace should have this set
+    DATABASE_URL = "sqlite:///./todo.db"
+    print("Warning: DATABASE_URL not set, using local SQLite")
 
-# Handle special case for postgres:// vs postgresql:// (if needed by SQLAlchemy)
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# Create Engine - Handle SQLite for local development
-DEBUG_MODE = os.getenv("DEBUG", "False").lower() == "true"
-
-# For SQLite, we need to add check_same_thread=False for threading compatibility
+# Create Engine
 if DATABASE_URL.startswith("sqlite:///"):
-    engine = create_engine(DATABASE_URL, echo=DEBUG_MODE, connect_args={"check_same_thread": False})
+    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 else:
-    engine = create_engine(DATABASE_URL, echo=DEBUG_MODE)
+    engine = create_engine(DATABASE_URL)
 
 def get_session() -> Generator[Session, None, None]:
-    """
-    Dependency to provide a database session for each request.
-    Yields a Session object and ensures it's closed after use.
-    """
     with Session(engine) as session:
         yield session

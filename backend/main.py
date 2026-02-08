@@ -4,19 +4,27 @@ from dotenv import load_dotenv
 import os
 from contextlib import asynccontextmanager
 from sqlmodel import SQLModel
-try:
-    from backend.core.database import engine
-    from backend.models import Todo # Import to register models
-    from backend.api.routes import todos
-except ImportError:
-    # Fallback for when running directly from backend directory
-    from .core.database import engine
-    from .models import Todo # Import to register models
-    from .api.routes import todos
+
+# Import modules
+import sys
+from pathlib import Path
+
+# Add the current directory to path to ensure modules are found
+current_dir = Path(__file__).resolve().parent
+if str(current_dir) not in sys.path:
+    sys.path.insert(0, str(current_dir))
+
+# Standardized imports (without backend. prefix for Docker compatibility)
+from core.database import engine
+from models.todo import Todo 
+from models.task import Task
+from models.conversation import Conversation
+from models.message import Message
+from api.routes.todos import router as todos_router
+from api.routes.chat import router as chat_router
 
 # Load environment variables
 load_dotenv()
-load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -30,8 +38,7 @@ app = FastAPI(title="Todo API", version="1.0.0", lifespan=lifespan)
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "http://localhost:8000",  # In case frontend is served from backend
-    "https://todo-app-frontend.vercel.app", # Placeholder for production
+    "https://todo-ai-chatbot-five.vercel.app",
     "*"  # Allow all origins during development
 ]
 
@@ -39,19 +46,18 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods
-    allow_headers=["*"],  # Allow all headers including Authorization
-    expose_headers=["Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Access-Control-Expose-Headers", "Authorization"],
-    # Add this to allow preflight requests
-    max_age=3600,  # Cache preflight responses for 1 hour
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["Authorization"],
 )
 
 # Include Routers
-app.include_router(todos.router, prefix="/todos", tags=["todos"])
+app.include_router(todos_router, prefix="/todos", tags=["todos"])
+app.include_router(chat_router, prefix="/api", tags=["chat"])
 
 @app.get("/")
 def read_root():
-    return {"message": "Todo API is running", "status": "independent"}
+    return {"message": "Todo API is running", "status": "active"}
 
 @app.get("/health")
 def health_check():

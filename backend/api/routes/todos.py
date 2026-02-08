@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 from typing import List, Optional
-from backend.core.database import get_session
-from backend.core.security import get_current_user
-from backend.models.todo import Todo, TodoCreate, TodoUpdate
+
+from core.database import get_session
+from core.security import get_current_user
+from models.todo import Todo, TodoCreate, TodoUpdate
 
 router = APIRouter()
 
@@ -13,10 +14,6 @@ def create_todo(
     session: Session = Depends(get_session),
     current_user_id: str = Depends(get_current_user)
 ):
-    """
-    Create a new todo.
-    User ID is automatically assigned from the token.
-    """
     todo = Todo.model_validate(todo_create, update={"user_id": current_user_id})
     session.add(todo)
     session.commit()
@@ -30,9 +27,6 @@ def read_todos(
     session: Session = Depends(get_session),
     current_user_id: str = Depends(get_current_user)
 ):
-    """
-    List all todos for the authenticated user.
-    """
     statement = select(Todo).where(Todo.user_id == current_user_id).offset(offset).limit(limit)
     todos = session.exec(statement).all()
     return todos
@@ -43,10 +37,6 @@ def read_todo(
     session: Session = Depends(get_session),
     current_user_id: str = Depends(get_current_user)
 ):
-    """
-    Get a specific todo.
-    Enforces ownership: Users can only see their own todos.
-    """
     todo = session.get(Todo, todo_id)
     if not todo or todo.user_id != current_user_id:
         raise HTTPException(status_code=404, detail="Todo not found")
@@ -59,10 +49,6 @@ def update_todo(
     session: Session = Depends(get_session),
     current_user_id: str = Depends(get_current_user)
 ):
-    """
-    Update a todo.
-    Partial updates are supported (only sent fields are updated).
-    """
     db_todo = session.get(Todo, todo_id)
     if not db_todo or db_todo.user_id != current_user_id:
         raise HTTPException(status_code=404, detail="Todo not found")
@@ -83,9 +69,6 @@ def delete_todo(
     session: Session = Depends(get_session),
     current_user_id: str = Depends(get_current_user)
 ):
-    """
-    Delete a todo.
-    """
     todo = session.get(Todo, todo_id)
     if not todo or todo.user_id != current_user_id:
         raise HTTPException(status_code=404, detail="Todo not found")
