@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/components/providers/query-provider";
+import FloatingChat from "@/components/FloatingChat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,10 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body
-        className={`antialiased bg-slate-100 text-slate-900`}
+        className={`antialiased bg-gradient-to-br from-slate-100 via-blue-100 to-indigo-100 text-slate-900`}
       >
         <QueryProvider>
           {children}
+          <FloatingChat />
         </QueryProvider>
       </body>
     </html>

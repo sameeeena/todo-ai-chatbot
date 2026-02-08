@@ -34,9 +34,9 @@ export default function RegisterPage() {
         email,
         password,
         callbackURL: "/dashboard",
-      });
+      }) as any;
 
-      if ('error' in result && result.error) {
+      if (result?.error) {
         console.error("Registration error:", result.error);
         const errorMessage = typeof result.error === 'string' 
           ? result.error 

@@ -74,61 +74,68 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-indigo-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Header />
       <div className="flex-grow container mx-auto p-4 max-w-4xl py-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-6 rounded-2xl bg-gradient-to-r from-white/80 to-indigo-50/80 backdrop-blur-sm border border-slate-200 shadow-xl">
           <div>
             <h1 className="text-3xl font-bold text-slate-800">My Tasks</h1>
             <p className="text-sm text-slate-600 mt-1">
               {totalTasks} total, {pendingTasks} pending, {completedTasks} completed
             </p>
           </div>
-          <div className="flex gap-2">
-            <div className="hidden sm:flex items-center gap-2 text-sm text-slate-600">
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+          <div className="flex gap-3">
+            <div className="hidden sm:flex items-center gap-3 text-sm text-slate-600">
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-indigo-500"></div>
                 <span>Pending: {pendingTasks}</span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
                 <span>Done: {completedTasks}</span>
               </div>
             </div>
             <Button
+              onClick={() => router.push('/chat')}
+              variant="outline"
+              className="border-indigo-500 text-indigo-600 hover:bg-indigo-50 hover:text-indigo-700 mr-2 rounded-lg shadow-sm hover:shadow-md transition-all"
+            >
+              AI Chat
+            </Button>
+            <Button
               onClick={handleLogout}
               variant="outline"
-              className="border-blue-500 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+              className="border-slate-500 text-slate-600 hover:bg-slate-50 hover:text-slate-700 rounded-lg shadow-sm hover:shadow-md transition-all"
             >
               Logout
             </Button>
           </div>
         </div>
 
-        <div className="mb-6 animate-in p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
+        <div className="mb-6 animate-in p-6 rounded-2xl bg-gradient-to-r from-white/80 to-indigo-50/80 backdrop-blur-sm border border-slate-200 shadow-xl">
           <TodoForm onAdd={handleAddTodo} />
         </div>
 
         {isTodosLoading ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600 mb-3" />
+          <div className="flex flex-col items-center justify-center py-12 bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200 shadow-lg">
+            <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mb-3" />
             <p className="text-slate-700">Loading your tasks...</p>
           </div>
         ) : error ? (
-          <div className="text-center py-12 bg-red-50 rounded-2xl border border-red-200">
+          <div className="text-center py-12 bg-red-50/50 backdrop-blur-sm rounded-2xl border border-red-200 shadow-lg">
             <h2 className="text-xl font-semibold text-red-600 mb-2">Error loading tasks</h2>
             <p className="text-red-500">{error instanceof Error ? error.message : 'Failed to load tasks'}</p>
             <p className="text-red-400/70 text-sm mt-2">Please check your connection and authentication</p>
           </div>
         ) : !Array.isArray(todos) ? (
-          <div className="text-center py-12 bg-red-50 rounded-2xl border border-red-200">
+          <div className="text-center py-12 bg-red-50/50 backdrop-blur-sm rounded-2xl border border-red-200 shadow-lg">
             <h2 className="text-xl font-semibold text-red-600 mb-2">Error loading tasks</h2>
             <p className="text-red-500">Data is invalid (expected array).</p>
           </div>
         ) : todos.length === 0 ? (
-          <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200 shadow-lg">
-            <div className="mx-auto w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-              <div className="text-blue-600">
+          <div className="text-center py-12 bg-gradient-to-r from-white/80 to-indigo-50/80 backdrop-blur-sm rounded-2xl border border-slate-200 shadow-xl">
+            <div className="mx-auto w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mb-4">
+              <div className="text-indigo-600">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 5v14M5 12h14"/>
                 </svg>
@@ -141,7 +148,7 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="space-y-3 animate-in">
-            <div className="flex justify-between items-center mb-3 p-4 rounded-xl bg-white/60 backdrop-blur-sm border border-gray-200">
+            <div className="flex justify-between items-center mb-3 p-4 rounded-xl bg-gradient-to-r from-white/80 to-indigo-50/80 backdrop-blur-sm border border-slate-200 shadow-sm">
               <h2 className="text-lg font-semibold text-slate-800">
                 Your Tasks ({totalTasks})
               </h2>
